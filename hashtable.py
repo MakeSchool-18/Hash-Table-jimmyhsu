@@ -18,24 +18,56 @@ class HashTable(object):
         return hash(key) % len(self.buckets)
 
     def length(self):
-        """Return the length of this hash table by traversing its buckets"""
+        """
+        Return the length of this hash table by traversing its buckets
+        Best case: Om(1) list is empty or only 1 element
+        Worst case: O(n^m where m is the length of linked list in each bucket) list is not empty, check every item
+        """
         # TODO: Count number of key-value entries in each of the buckets
-        pass
+
+        total_length = 0
+        # iterate over all buckets, find length of buckets
+        for bucket in self.buckets:
+            total_length += bucket.length()
+        return total_length
 
     def contains(self, key):
-        """Return True if this hash table contains the given key, or False"""
+        """
+        Return True if this hash table contains the given key, or False
+        Best case: Om(1) hash table is empty
+        Worst case: O(n) check entire linked list in bucket for key
+        """
         # TODO: Check if the given key exists in a bucket
-        pass
+
+        # ternary: traverse linked list, return true if found tuple with matching key, else return false
+        # 'is not None' is techinically unnecessary, but for readability :shrug_face:
+        return True if self.buckets[self._bucket_index(key)].find(lambda data: key is data.key) is not None else False
 
     def get(self, key):
         """Return the value associated with the given key, or raise KeyError"""
         # TODO: Check if the given key exists and return its associated value
-        pass
+
+        # traverse linked list, find item via key, then return value
+        chosen_bucket = self._bucket_index(key)
+        linked_list_from_chosen_bucket = self.buckets[chosen_bucket]
+        value_from_key = linked_list_from_chosen_bucket.find(lambda data: key is data.key).value
+        if value_from_key is not None:
+            return value_from_key
+        else:
+            raise KeyError
 
     def set(self, key, value):
         """Insert or update the given key with its associated value"""
         # TODO: Insert or update the given key-value entry into a bucket
-        pass
+
+        # check if tuple exists
+        checked_tuple = self.get(key)
+        if checked_tuple is None:
+            # if not append to bucket
+            self.buckets[self._bucket_index(key)].append(value)
+        else:
+            # if so, update value
+            checked_tuple.value = value
 
     def delete(self, key):
         """Delete the given key from this hash table, or raise KeyError"""
@@ -45,7 +77,10 @@ class HashTable(object):
     def keys(self):
         """Return a list of all keys in this hash table"""
         # TODO: Collect all keys in each of the buckets
-        pass
+        key_list = []
+        for bucket in self.buckets:
+            bucket
+        return total_length
 
     def values(self):
         """Return a list of all values in this hash table"""
