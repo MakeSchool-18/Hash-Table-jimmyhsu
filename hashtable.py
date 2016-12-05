@@ -42,40 +42,50 @@ class HashTable(object):
         # traverse linked list, find item via key, then return true or false if found
         chosen_bucket = self._bucket_index(key)
         linked_list_from_chosen_bucket = self.buckets[chosen_bucket]
-        if_key_exists = linked_list_from_chosen_bucket.find(lambda data: key is data.key)
+        if_key_exists = linked_list_from_chosen_bucket.find(lambda data: key is data[0])
         if if_key_exists:
             return True
         else:
             return False
 
         # ternery version of above
-        # return True if self.buckets[self._bucket_index(key)].find(lambda data: key is data.key) is not None else False
+        # return True if self.buckets[self._bucket_index(key)].find(lambda data: key is data[0]) is not None else False
 
     def get(self, key):
-        """Return the value associated with the given key, or raise KeyError"""
+        """
+        Return the value associated with the given key, or raise KeyError
+        Best case: Om(1) hash table is empty
+        Worst case: O(n) check entire linked list in specified bucket to find value
+        """
         # TODO: Check if the given key exists and return its associated value
 
         # traverse linked list, find item via key, then return value
         chosen_bucket = self._bucket_index(key)
         linked_list_from_chosen_bucket = self.buckets[chosen_bucket]
-        value_from_key = linked_list_from_chosen_bucket.find(lambda data: key is data.key).value
-        if value_from_key is not None:
-            return value_from_key
+        data_from_node_in_linked_list = linked_list_from_chosen_bucket.find(lambda data: key == data[0])  # key position in data array
+        if data_from_node_in_linked_list is not None:
+            return data_from_node_in_linked_list[1]
         else:
             raise KeyError
 
     def set(self, key, value):
-        """Insert or update the given key with its associated value"""
+        """
+        Insert or update the given key with its associated value
+        Best case: Om(1) hash table is empty
+        Worst case: O(1) check entire linked list in specified bucket to find value
+        """
         # TODO: Insert or update the given key-value entry into a bucket
 
-        # check if tuple exists
-        checked_tuple = self.get(key)
-        if checked_tuple is None:
-            # if not append to bucket
-            self.buckets[self._bucket_index(key)].append(value)
+        chosen_bucket = self._bucket_index(key)
+        linked_list_from_chosen_bucket = self.buckets[chosen_bucket]
+        data_from_node_in_linked_list = linked_list_from_chosen_bucket.find(lambda data: key == data[0])  # key position in data array
+        if data_from_node_in_linked_list is None:
+            # if not append to bucket as data array
+            self.buckets[chosen_bucket].append([key, value])
         else:
-            # if so, update value
-            checked_tuple.value = value
+            # if so, update value in data array
+            data_from_node_in_linked_list[0] = key
+            data_from_node_in_linked_list[1] = value
 
     def delete(self, key):
         """Delete the given key from this hash table, or raise KeyError"""
@@ -83,21 +93,22 @@ class HashTable(object):
         chosen_bucket = self._bucket_index(key)
         linked_list_from_chosen_bucket = self.buckets[chosen_bucket]
         # if statement function mutates bucket while checking for ValueError to raise KeyError
-        if linked_list_from_chosen_bucket.delete(key) is ValueError:
-            raise KeyError
+        linked_list_from_chosen_bucket.deleteByKey(key)
 
     def keys(self):
         """Return a list of all keys in this hash table"""
         # TODO: Collect all keys in each of the buckets
         key_list = []
-        for bucket in self.buckets:
-            key_list.append(bucket.data.key)
+        for linked_list in self.buckets:
+            # for each item in the linked list, append all available keys, which reside in array index 0
+            linked_list.map(lambda data: key_list.append(data[0]))
         return key_list
 
     def values(self):
         """Return a list of all values in this hash table"""
         # TODO: Collect all values in each of the buckets
         value_list = []
-        for bucket in self.buckets:
-            value_list.append(bucket.data.value)
+        for linked_list in self.buckets:
+            # for each item in the linked list, append all available keys, which reside in array index 1
+            linked_list.map(lambda data: value_list.append(data[1]))
         return value_list

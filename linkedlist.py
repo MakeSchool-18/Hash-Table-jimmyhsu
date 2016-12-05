@@ -51,6 +51,17 @@ class LinkedList(object):
             current = current.next
         return result
 
+    def map(self, quality):
+        """
+        Perform an action on all elements in the linked list
+        Best case: Om(1) list is empty or only 1 element
+        Worst case: O(n) list is not empty
+        """
+        current = self.head
+        while current is not None:
+            quality(current.data)
+            current = current.next
+
     def is_empty(self):
         """
         Return True if this linked list is empty, or False
@@ -168,6 +179,55 @@ class LinkedList(object):
         else:
             raise ValueError('Linked List is empty.')
 
+    def deleteByKey(self, key):
+        """
+        Delete the given item by key from this linked list, or raise ValueError
+        Specific to hashtable implementation for best speed
+        Best case: Om(1) item is at the head of list
+        Worst case: O(n) item not present or at end
+        """
+        # TODO: find given item and delete if found
+
+        # edge case - check if empty
+        if self.head is not None:
+            current_node = self.head
+            # edge case - check front of line: one time check to "delete" first item
+            if current_node.data[0] is key:
+                # edge case - if also only key in array
+                if current_node.next is None:
+                    self.head = None
+                    self.tail = None
+                else:
+                    new_head = current_node.next
+                    # remove reference to the next node so this node can be garbage collected when "deleted"
+                    current_node.next = None
+                    # set current_node's next to no longer be the "deleted" node and be the node after
+                    self.head = new_head
+
+            while current_node is not None and current_node.next is not None:
+                # check if the next node's data matches
+                if current_node.next.data[0] is key:
+                    # edge case - for end of line: save the node if the node after next isn't empty
+                    if current_node.next.next is not None:
+                        new_next_node = current_node.next.next
+                        # remove reference to the next node so this node can be garbage collected when "deleted"
+                        current_node.next.next = None
+                        # set current_node's next to no longer be the "deleted" node and be the node after
+                        current_node.next = new_next_node
+                    # there is no node after next, so just "delete" the reference to it now
+                    else:
+                        current_node.next = None
+                        # set current node to tail
+                        self.tail = current_node
+                # key not found in next node and the node after doesn't exist, so return error becuase it's end of list
+                elif current_node.next.next is None:
+                    raise KeyError('Linked List does not contain %i.' % (key))
+
+                current_node = current_node.next
+        # empty, so return error
+        else:
+            raise KeyError('Linked List is empty.')
+
     def find(self, quality):
         """
         Return an item from this linked list satisfying the given quality
@@ -182,10 +242,12 @@ class LinkedList(object):
             while current_node is not None:
                 # if true, return the data
                 if quality(current_node.data) is True:
+                    print(current_node.data)
                     return current_node.data
                 current_node = current_node.next
         else:
             return None
+
 
 def test_linked_list():
     ll = LinkedList()
