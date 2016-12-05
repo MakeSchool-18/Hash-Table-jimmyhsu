@@ -39,9 +39,17 @@ class HashTable(object):
         """
         # TODO: Check if the given key exists in a bucket
 
-        # ternary: traverse linked list, return true if found tuple with matching key, else return false
-        # 'is not None' is techinically unnecessary, but for readability :shrug_face:
-        return True if self.buckets[self._bucket_index(key)].find(lambda data: key is data.key) is not None else False
+        # traverse linked list, find item via key, then return true or false if found
+        chosen_bucket = self._bucket_index(key)
+        linked_list_from_chosen_bucket = self.buckets[chosen_bucket]
+        if_key_exists = linked_list_from_chosen_bucket.find(lambda data: key is data.key)
+        if if_key_exists:
+            return True
+        else:
+            return False
+
+        # ternery version of above
+        # return True if self.buckets[self._bucket_index(key)].find(lambda data: key is data.key) is not None else False
 
     def get(self, key):
         """Return the value associated with the given key, or raise KeyError"""
@@ -72,17 +80,24 @@ class HashTable(object):
     def delete(self, key):
         """Delete the given key from this hash table, or raise KeyError"""
         # TODO: Find the given key and delete its entry if found
-        pass
+        chosen_bucket = self._bucket_index(key)
+        linked_list_from_chosen_bucket = self.buckets[chosen_bucket]
+        # if statement function mutates bucket while checking for ValueError to raise KeyError
+        if linked_list_from_chosen_bucket.delete(key) is ValueError:
+            raise KeyError
 
     def keys(self):
         """Return a list of all keys in this hash table"""
         # TODO: Collect all keys in each of the buckets
         key_list = []
         for bucket in self.buckets:
-            bucket
-        return total_length
+            key_list.append(bucket.data.key)
+        return key_list
 
     def values(self):
         """Return a list of all values in this hash table"""
         # TODO: Collect all values in each of the buckets
-        pass
+        value_list = []
+        for bucket in self.buckets:
+            value_list.append(bucket.data.value)
+        return value_list
