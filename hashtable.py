@@ -6,22 +6,35 @@ from linkedlist import LinkedList
 class HashTable(object):
 
     def __init__(self, init_size=8):
-        """Initialize this hash table with the given initial size"""
+        """
+        Initialize this hash table with the given initial size
+        Algo Analysis notation info:
+        b = bucket
+        n = nodes
+        """
         self.buckets = [LinkedList() for i in range(init_size)]
 
     def __repr__(self):
-        """Return a string representation of this hash table"""
+        """
+        Return a string representation of this hash table
+        Best case: Om(1) bucket is empty or 1st node in first bucket
+        Worst case: O(b+n) list is not empty, check every item
+        """
         return 'HashTable({})'.format(self.length())
 
     def _bucket_index(self, key):
-        """Return the bucket index where the given key would be stored"""
+        """
+        Return the bucket index where the given key would be stored
+        Best case: Om(1) bucket is empty or 1st node in first bucket
+        Worst case: O(b+n) list is not empty, check every item
+        """
         return hash(key) % len(self.buckets)
 
     def length(self):
         """
         Return the length of this hash table by traversing its buckets
-        Best case: Om(1) list is empty or only 1 element
-        Worst case: O(n^m where m is the length of linked list in each bucket) list is not empty, check every item
+        Best case: Om(1) bucket is empty or 1st node in first bucket
+        Worst case: O(b+n) list is not empty, check every item
         """
         # TODO: Count number of key-value entries in each of the buckets
 
@@ -34,8 +47,8 @@ class HashTable(object):
     def contains(self, key):
         """
         Return True if this hash table contains the given key, or False
-        Best case: Om(1) hash table is empty
-        Worst case: O(n) check entire linked list in bucket for key
+        Best case: Om(1) bucket is empty or 1st node in first bucket
+        Worst case: O(b+n) list is not empty, check every item
         """
         # TODO: Check if the given key exists in a bucket
 
@@ -54,8 +67,8 @@ class HashTable(object):
     def get(self, key):
         """
         Return the value associated with the given key, or raise KeyError
-        Best case: Om(1) hash table is empty
-        Worst case: O(n) check entire linked list in specified bucket to find value
+        Best case: Om(1) bucket has no linked list, or is first node
+        Worst case: O(n) list is not empty, check every item of specified bucket
         """
         # TODO: Check if the given key exists and return its associated value
 
@@ -71,8 +84,8 @@ class HashTable(object):
     def set(self, key, value):
         """
         Insert or update the given key with its associated value
-        Best case: Om(1) hash table is empty
-        Worst case: O(1) check entire linked list in specified bucket to find value
+        Best case: Om(1) bucket has no linked list, or is first node
+        Worst case: O(n) list is not empty, check every item of specified bucket
         """
         # TODO: Insert or update the given key-value entry into a bucket
 
@@ -88,7 +101,11 @@ class HashTable(object):
             data_from_node_in_linked_list[1] = value
 
     def delete(self, key):
-        """Delete the given key from this hash table, or raise KeyError"""
+        """
+        Delete the given key from this hash table, or raise KeyError
+        Best case: Om(1) bucket has no linked list, or is first node
+        Worst case: O(n) list is not empty, check every item of specified bucket
+        """
         # TODO: Find the given key and delete its entry if found
         chosen_bucket = self._bucket_index(key)
         linked_list_from_chosen_bucket = self.buckets[chosen_bucket]
@@ -96,7 +113,11 @@ class HashTable(object):
         linked_list_from_chosen_bucket.deleteByKey(key)
 
     def keys(self):
-        """Return a list of all keys in this hash table"""
+        """
+        Return a list of all keys in this hash table
+        Best case: Om(1) bucket is empty or 1st node in first bucket
+        Worst case: O(b+n) list is not empty, check every item
+        """
         # TODO: Collect all keys in each of the buckets
         key_list = []
         for linked_list in self.buckets:
@@ -105,7 +126,11 @@ class HashTable(object):
         return key_list
 
     def values(self):
-        """Return a list of all values in this hash table"""
+        """
+        Return a list of all values in this hash table
+        Best case: Om(1) bucket is empty or 1st node in first bucket
+        Worst case: O(b+n) list is not empty, check every item
+        """
         # TODO: Collect all values in each of the buckets
         value_list = []
         for linked_list in self.buckets:
